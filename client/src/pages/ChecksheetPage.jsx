@@ -10,6 +10,7 @@ import {
     Box,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import moment from 'moment';
 //import io from 'socket.io-client';
 
 const ChecksheetPage = () => {
@@ -20,11 +21,21 @@ const ChecksheetPage = () => {
         const fetchData = async () => {
             const response = await fetch('http://localhost:5000/checksheet');
             const data = await response.json();
-
+    
             // Access the data array and filter out the checked ones
             const uncheckedSheets = data.filter(sheet => !sheet.isChecked);
-
-            setData(uncheckedSheets);
+    
+            // Map the data to a new format
+            const mappedData = uncheckedSheets.map(sheet => ({
+                id: sheet._id,
+                day: sheet.day,
+                lab: sheet.lab,
+                startTime: moment(sheet.startTime, 'HH:mm:ss').format('hh:mm A'),
+                checkedBy: sheet.checkedBy,
+                actualTime: sheet.actualTime ? moment(sheet.actualTime).format('hh:mm A') : ""
+            }));
+    
+            setData(mappedData);
         };
         fetchData();
     }, []);
@@ -55,13 +66,6 @@ const ChecksheetPage = () => {
                 size: 30,
                 filtervariant: 'select',
             },
-            {
-                accessorKey: 'id',
-                header: 'Id',
-                size: 30,
-                filtervariant: 'select',
-            },
-
             {
                 accessorKey: 'startTime',
                 header: 'Check Time',
@@ -96,7 +100,14 @@ const ChecksheetPage = () => {
         enablePagination: false,
         enableRowSelection: true,
         initialState: {
-            columnPinning: {right: ['mrt-row-actions']},
+            columnPinning: { right: ['mrt-row-actions'] },
+            columnOrder: [
+                'mrt-row-select', 
+                'day',
+                'lab',
+                'startTime',
+                'checkedBy',
+            ],
             showColumnFilters: false,
             showColumnVisibilityManager: false,
             showDensitySelector: false,
