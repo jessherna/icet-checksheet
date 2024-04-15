@@ -14,8 +14,9 @@
 .form-container {
     background-color: var(--secondary-color);
     color: var(--primary-color);
-    min-width: 100%;
+    max-width: 80vh;
     margin: 10px auto;
+    margin-top: 15vh;
     padding: 1rem;
     display: grid;
     grid-template-columns: 1fr;

@@ -6,7 +6,8 @@ import {
     useMaterialReactTable,
 } from 'material-react-table';
 import {
-    IconButton
+    IconButton,
+    Box,
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 //import io from 'socket.io-client';
@@ -92,10 +93,10 @@ const ChecksheetPage = () => {
         data: data,
         density: 'compact',
         enableGrouping: false,
-        enableClickToCopy: true,
         enablePagination: false,
+        enableRowSelection: true,
         initialState: {
-            columnPinning: { left: ['lab'] },
+            columnPinning: {right: ['mrt-row-actions']},
             showColumnFilters: false,
             showColumnVisibilityManager: false,
             showDensitySelector: false,
@@ -109,6 +110,40 @@ const ChecksheetPage = () => {
         },
         enableRowActions: true,
         positionActionsColumn: 'last',
+        muiTopToolbarProps: {
+            sx: {
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '0px',
+                marginLeft: '5%',
+                marginRight: '5%',
+                fontFamily: 'Arial',
+                button: {
+                    fontSize: '1em',
+                    borderRadius: '5px',
+                },
+            },
+        },
+        muiTableContainerProps: {
+            sx: {
+                marginTop: '1%',
+                width: '90%',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                marginBottom: '0px',
+            },
+        },
+        muiTableBodyCellProps: {
+            sx: {
+                fontSize: isSmallScreen ? '0.8em' : '1em',
+            }
+        },
+        muiTableHeadCellProps: {
+            sx: {
+                fontSize: isSmallScreen ? '0.8em' : '1.2em',
+            }
+        },
         renderRowActions: ({ row }) => (
             <IconButton
                 variant="light"
@@ -131,10 +166,51 @@ const ChecksheetPage = () => {
                 <CheckCircleOutlineIcon />
             </IconButton>
         ),
+        renderTopToolbarCustomActions: ({ table }) => (
+            <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
+                <Button
+                    variant='primary'
+                    onClick={
+                        async () => {
+                            alert('Create checksheet...');
+                        }
+                    }
+                >
+                    Create
+                </Button>
+
+                <Button
+                    variant='success'
+                    disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
+                    onClick={
+                        async () => {
+                            alert('Mark lab as checked...');
+                        }
+                    }
+                >
+                    Check
+                </Button>
+            </Box>
+
+        ),
     });
 
     return (
-        <MaterialReactTable table={table} />
+        <>
+            <Box
+                justifyContent={'center'}
+                alignItems={'center'}
+                marginTop={isSmallScreen ? '8vh' : '15vh'}
+                marginBottom={'0px'}
+                marginLeft={'auto'}
+                marginRight={'auto'}
+                maxWidth={'96%'}
+                overflow={'auto'}
+                padding={'0px'}
+            >
+                <MaterialReactTable table={table} />
+            </Box>
+        </>
     );
 };
 
