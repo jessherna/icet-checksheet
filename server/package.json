@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "mongoose": "^8.3.1",
@@ -12,7 +13,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "client": "cd .. && cd client && npm run dev",
+    "dev": "concurrently \"npm run start\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
