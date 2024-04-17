@@ -149,7 +149,7 @@ const HistoryPage = () => {
             <Box
                 justifyContent={'center'}
                 alignItems={'center'}
-                marginTop={isSmallScreen ? '8vh' : '15vh'}
+                marginTop={'2vh'}
                 marginBottom={'0px'}
                 marginLeft={'auto'}
                 marginRight={'auto'}
