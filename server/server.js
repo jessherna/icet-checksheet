@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const socketIo = require('socket.io');
 const cors = require('cors');
 require('dotenv').config();
+const Checksheet = require('./models/Checksheet');
 
 const app = express();
 const server = http.createServer(app);
@@ -12,6 +13,11 @@ const checksheetRouter = require('./routes/checksheetRoutes');
 const scheduleRouter = require('./routes/scheduleRoutes');
 
 const mongoUrl = process.env.MONGO_URL;
+
+async function getUpdatedChecksheet(id) {
+    const updatedChecksheet = await Checksheet.findById(id);
+    return updatedChecksheet;
+}
 
 mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
@@ -42,7 +48,10 @@ app.use('/schedule', scheduleRouter);
 io.on('connection', (socket) => {
     console.log('New client connected');
     socket.on('scheduleUploaded', () => console.log('Schedule uploaded'));
-    socket.on('checksheetUpdated', (data) => console.log(`Checksheet updated: ${data.id}`));
+    socket.on('checksheetUpdated', async ({ id }) => {
+        const updatedChecksheet = await getUpdatedChecksheet(id);
+        io.emit('checksheetUpdated', updatedChecksheet);
+    });
     socket.on('scheduleUpdated', () => console.log('Schedule updated'));
     socket.on('disconnect', () => console.log('Client disconnected'));
 });
