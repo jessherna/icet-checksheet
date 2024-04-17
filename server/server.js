@@ -26,11 +26,11 @@ mongoose.connect(mongoUrl)
 const path = require('path');
 
 // Serve static files from the client-side build output directory
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+app.use(express.static(path.join(__dirname, '..', '..', 'client', 'dist')));
 
 // Serve the index.html file for any other route
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '..', '..', 'client', 'dist', 'index.html'));
 });
 
 app.use(express.json());
