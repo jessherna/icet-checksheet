@@ -23,7 +23,13 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(
+    {
+        origin: '*',
+        methods: ['GET', 'POST', 'PATCH'],
+        credentials: true
+    }
+));
 app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
