@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import './SchedulePage.css';
-//import io from 'socket.io-client';
+import { VITE_API_URL } from '../../config';
 
 const Schedule = () => {
     const [jsonData, setJsonData] = useState(null);
-    const URL = `${import.meta.env.REACT_APP_BACKEND_URL}` || 'http://localhost:5000';
-    //const socket = io(URL);
+    const URL = `${VITE_API_URL}`;
+    const socket = io(URL, { reconnectionAttempts: 3 });
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
@@ -57,8 +57,8 @@ const Schedule = () => {
 
             alert('Schedule uploaded successfully');
 
-            // Emit socket.io event
-            //socket.emit('scheduleUploaded', { schedule: jsonData });
+            //Emit socket.io event
+            socket.emit('scheduleUpdated');
 
         } catch (error) {
             alert('Failed to upload schedule: ' + error.message);
