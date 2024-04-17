@@ -15,8 +15,13 @@ const HistoryPage = () => {
     const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket'] });
 
     useEffect(() => {
+        socket.connect();
         const fetchData = async () => {
-            const response = await fetch(`${URL}/checksheet`);
+            const response = await fetch(`${URL}/checksheet`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
             const data = await response.json();
 
             // Map the data to a new format
@@ -32,7 +37,21 @@ const HistoryPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, [socket, URL]);
+
+        // Listen for the 'checksheetUpdated' event and update the state
+        socket.on('checksheetUpdated', (updatedChecksheet) => {
+            setData(prevData => {
+                // Replace the updated checksheet in the data array
+                return prevData.map(sheet => sheet.id === updatedChecksheet.id ? updatedChecksheet : sheet);
+            });
+        });
+
+        // Clean up the effect by disconnecting from the socket when the component is unmounted
+        return () => {
+            socket.disconnect();
+        };
+
+    }, []);
 
     
     const isSmallScreen = useMediaQuery({ query: '(max-width: 600px)' });

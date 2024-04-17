@@ -18,7 +18,7 @@ const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const URL = `${VITE_API_URL}`;
-    const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket']});
+    const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket'] });
 
     useEffect(() => {
         socket.connect();
@@ -47,7 +47,20 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
-        
+
+        // Listen for the 'checksheetUpdated' event and update the state
+        socket.on('checksheetUpdated', (updatedChecksheet) => {
+            setData(prevData => {
+                // Replace the updated checksheet in the data array
+                return prevData.map(sheet => sheet.id === updatedChecksheet.id ? updatedChecksheet : sheet);
+            });
+        });
+
+        // Clean up the effect by disconnecting from the socket when the component is unmounted
+        return () => {
+            socket.disconnect();
+        };
+
     }, []);
 
     const handleCheck = async ({ id, userName }) => {
@@ -87,7 +100,6 @@ const ChecksheetPage = () => {
 
             // Emit a socket event to notify the server that a checksheet has been updated
             socket.emit('checksheetUpdated', { id });
-            socket.disconnect();
         } catch (err) {
             console.error(err);
             alert('Failed to update checksheet');
