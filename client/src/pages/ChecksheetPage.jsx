@@ -62,7 +62,10 @@ const ChecksheetPage = () => {
 
             setData(prevData => {
                 // Replace the updated checksheet in the data array
-                return prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
+                const updatedData = prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
+
+                // Filter the data to show only the checksheets where isChecked is false
+                return updatedData.filter(sheet => !sheet.isChecked);
             });
         });
 
