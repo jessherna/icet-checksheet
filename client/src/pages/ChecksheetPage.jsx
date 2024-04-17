@@ -50,9 +50,19 @@ const ChecksheetPage = () => {
 
         // Listen for the 'checksheetUpdated' event and update the state
         socket.on('checksheetUpdated', (updatedChecksheet) => {
+            // Transform the updated checksheet into the same format as the data in the state
+            const transformedChecksheet = {
+                id: updatedChecksheet._id,
+                day: updatedChecksheet.day,
+                lab: updatedChecksheet.lab,
+                startTime: moment(updatedChecksheet.startTime, 'HH:mm:ss').format('hh:mm A'),
+                checkedBy: updatedChecksheet.checkedBy,
+                actualTime: updatedChecksheet.actualTime ? moment(updatedChecksheet.actualTime).format('hh:mm A') : ""
+            };
+
             setData(prevData => {
                 // Replace the updated checksheet in the data array
-                return prevData.map(sheet => sheet.id === updatedChecksheet.id ? updatedChecksheet : sheet);
+                return prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
             });
         });
 
