@@ -11,13 +11,12 @@ import {
 } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import moment from 'moment';
-//import io from 'socket.io-client';
+import io from 'socket.io-client';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
-
-    //const socket = io('http://localhost:5000');
+    const socket = io('http://localhost:5000');
 
     useEffect(() => {
         setSelectedRows([]);
@@ -41,7 +40,7 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, []);
+    }, [socket]);
 
     const handleCheck = async ({ id, userName }) => {
         try {
@@ -75,10 +74,11 @@ const ChecksheetPage = () => {
 
             if (selectedRows) {
                 alert("Checksheet updated");
+                window.location.reload();
             }
 
-            // Introduce a delay before the next check
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 2000 ms = 2 seconds
+            // Emit a socket event to notify the server that a checksheet has been updated
+            socket.emit('checksheetUpdated', { id });
         } catch (err) {
             console.error(err);
             alert('Failed to update checksheet');
@@ -239,7 +239,7 @@ const ChecksheetPage = () => {
                         }
                     }}
                 >
-                    Create
+                    Start a Checksheet
                 </Button>
 
             </Box>

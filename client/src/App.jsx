@@ -3,8 +3,8 @@ import Header from './partials/Header';
 import Footer from './partials/Footer';
 
 import ChecksheetPage from './pages/ChecksheetPage';
-import Schedule from './pages/SchedulePage';
-//import History from './pages/History';
+import SchedulePage from './pages/SchedulePage';
+import HistoryPage from './pages/HistoryPage';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,8 +16,8 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<ChecksheetPage />} />
-          <Route path="/schedule" element={<Schedule />} />
-          {/*<Route path="/history" element={<History />} />*/}
+          <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/history" element={<HistoryPage />} />
         </Routes>
         <Footer />
       </Router>

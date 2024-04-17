@@ -29,6 +29,7 @@ app.use('/schedule', scheduleRouter);
 io.on('connection', (socket) => {
     console.log('New client connected');
     socket.on('scheduleUploaded', () => console.log('Schedule uploaded'));
+    socket.on('checksheetUpdated', (data) => console.log(`Checksheet updated: ${data.id}`));
     socket.on('disconnect', () => console.log('Client disconnected'));
 });
 

@@ -10,7 +10,7 @@ const Header = () => {
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Checksheet</Nav.Link>
                         <Nav.Link href="/schedule">Schedule</Nav.Link>
-                        {/*<Nav.Link href="/history">History</Nav.Link>*/}
+                        <Nav.Link href="/history">History</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
