@@ -25,11 +25,11 @@ mongoose.connect(mongoUrl)
     .catch(err => console.log(err));
 
 // Serve static assets from the 'dist' directory
-app.use(express.static(path.join(__dirname, '..', 'client/dist')));
+app.use(express.static(path.join(__dirname, '..', '..', 'client/dist')));
 
 // Serve index.html for all other routes to enable client-side routing
 app.get('*', function (req, res) {
-    res.sendFile(path.join(__dirname, '..', 'client/dist/', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'client/dist/', 'index.html'));
 });
 
 app.use(express.json());
