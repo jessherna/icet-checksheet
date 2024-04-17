@@ -3,6 +3,7 @@ const http = require('http');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
 const cors = require('cors');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -11,7 +12,7 @@ const io = socketIo(server);
 const checksheetRouter = require('./routes/checksheetRoutes');
 const scheduleRouter = require('./routes/scheduleRoutes');
 
-const mongoUrl = 'mongodb://icetclass:Seta5b1pa55@15.156.204.35:27017/'; // Replace with your MongoDB connection string
+const mongoUrl = process.env.MONGO_URL;
 
 mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
