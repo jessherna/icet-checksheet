@@ -42,7 +42,7 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, [socket, URL]);
+    }, [URL]);
 
     const handleCheck = async ({ id, userName }) => {
         try {

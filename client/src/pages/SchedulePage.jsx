@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import './SchedulePage.css';
+import { io } from 'socket.io-client';
 import { VITE_API_URL } from '../../config';
 
 const Schedule = () => {

@@ -32,7 +32,7 @@ const HistoryPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, [socket, URL]);
+    }, [URL]);
 
     
     const isSmallScreen = useMediaQuery({ query: '(max-width: 600px)' });
