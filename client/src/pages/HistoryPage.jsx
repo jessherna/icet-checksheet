@@ -6,15 +6,17 @@ import {
 } from 'material-react-table';
 import { Box } from '@mui/material';
 import moment from 'moment';
-//import io from 'socket.io-client';
+import io from 'socket.io-client';
+import { VITE_API_URL } from '../../config';
 
 const HistoryPage = () => {
     const [data, setData] = useState([]);
-    //const socket = io('http://localhost:5000');
+    const URL = `${VITE_API_URL}`;
+    const socket = io(URL);
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch('http://localhost:5000/checksheet');
+            const response = await fetch(`${URL}/checksheet`);
             const data = await response.json();
 
             // Map the data to a new format
@@ -30,7 +32,7 @@ const HistoryPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, []);
+    }, [socket, URL]);
 
     
     const isSmallScreen = useMediaQuery({ query: '(max-width: 600px)' });

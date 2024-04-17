@@ -12,16 +12,18 @@ import {
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import moment from 'moment';
 import io from 'socket.io-client';
+import { VITE_API_URL } from '../../config';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
-    const socket = io('http://localhost:5000');
+    const URL = `${VITE_API_URL}`;
+    const socket = io(URL);
 
     useEffect(() => {
         setSelectedRows([]);
         const fetchData = async () => {
-            const response = await fetch('http://localhost:5000/checksheet');
+            const response = await fetch(`${URL}/checksheet`);
             const data = await response.json();
 
             // Access the data array and filter out the checked ones
@@ -40,7 +42,7 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
-    }, [socket]);
+    }, [socket, URL]);
 
     const handleCheck = async ({ id, userName }) => {
         try {
@@ -55,7 +57,7 @@ const ChecksheetPage = () => {
             const now = new Date();
             const actualTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
-            const response = await fetch(`http://localhost:5000/checksheet/${id}`, {
+            const response = await fetch(`${URL}/checksheet/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -224,7 +226,7 @@ const ChecksheetPage = () => {
                     variant='primary'
                     onClick={async () => {
                         try {
-                            const response = await fetch('http://localhost:5000/checksheet/create', { method: 'POST' });
+                            const response = await fetch(`${URL}checksheet/create`, { method: 'POST' });
                             if (!response.ok) {
                                 const errorData = await response.json();
                                 throw new Error(errorData.message || 'Network response was not ok');
