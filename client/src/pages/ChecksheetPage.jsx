@@ -18,7 +18,7 @@ const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const URL = `${VITE_API_URL}`;
-    const socket = io(URL);
+    const socket = io(URL, { retries: 3 });
 
     useEffect(() => {
         setSelectedRows([]);
@@ -220,7 +220,7 @@ const ChecksheetPage = () => {
                 <CheckCircleOutlineIcon />
             </IconButton>
         ),
-        renderTopToolbarCustomActions: ({ table }) => (
+        renderTopToolbarCustomActions: () => (
             <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
                 <Button
                     variant='primary'
