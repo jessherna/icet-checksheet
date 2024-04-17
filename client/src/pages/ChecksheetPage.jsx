@@ -43,7 +43,7 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
-        socket.disconnect();
+        
     }, [socket, URL]);
 
     const handleCheck = async ({ id, userName }) => {
@@ -83,6 +83,7 @@ const ChecksheetPage = () => {
 
             // Emit a socket event to notify the server that a checksheet has been updated
             socket.emit('checksheetUpdated', { id });
+            socket.disconnect();
         } catch (err) {
             console.error(err);
             alert('Failed to update checksheet');
