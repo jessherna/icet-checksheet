@@ -23,8 +23,8 @@ mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
-app.get('/', (req, res) => {
-    res.send('Server is running');
+app.get('*', function (request, response) {
+    response.sendFile(__dirname + '/public/index.html');
 });
 
 app.use(express.json());
