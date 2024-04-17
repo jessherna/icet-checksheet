@@ -7,7 +7,6 @@ require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
 
 const checksheetRouter = require('./routes/checksheetRoutes');
 const scheduleRouter = require('./routes/scheduleRoutes');
@@ -23,7 +22,20 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+const io = require("socket.io")(server, {
+    cors: {
+        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+        methods: ["GET", "POST", "PATCH", "DELETE"],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true
+    }
+});
 app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
