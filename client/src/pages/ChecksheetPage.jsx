@@ -24,7 +24,11 @@ const ChecksheetPage = () => {
         socket.connect();
         setSelectedRows([]);
         const fetchData = async () => {
-            const response = await fetch(`${URL}/checksheet`);
+            const response = await fetch(`${URL}/checksheet`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
             const data = await response.json();
 
             // Access the data array and filter out the checked ones
@@ -44,7 +48,7 @@ const ChecksheetPage = () => {
         };
         fetchData();
         
-    }, [socket, URL]);
+    }, [socket]);
 
     const handleCheck = async ({ id, userName }) => {
         try {
