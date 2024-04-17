@@ -23,6 +23,8 @@ mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
+const path = require('path');
+
 // Serve static files from the Vite build output directory
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
