@@ -23,16 +23,6 @@ mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
-const path = require('path');
-
-// Serve static files from the client-side build output directory
-app.use(express.static(path.join(__dirname, '..', '..', 'client', 'dist')));
-
-// Serve the index.html file for any other route
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'client', 'dist', 'index.html'));
-});
-
 app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
