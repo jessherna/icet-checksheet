@@ -3,6 +3,7 @@ const http = require('http');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const Checksheet = require('./models/Checksheet');
 
@@ -23,6 +24,14 @@ mongoose.connect(mongoUrl)
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log(err));
 
+// Serve static assets from the 'dist' directory
+app.use(express.static(path.join(__dirname, 'client/dist')));
+
+// Serve index.html for all other routes to enable client-side routing
+app.get('*', function (req, res) {
+    res.sendFile(path.join(__dirname, 'client/dist/', 'index.html'));
+});
+
 app.use(express.json());
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -38,6 +47,9 @@ const io = require("socket.io")(server, {
         credentials: true
     }
 });
+
+
+
 app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
