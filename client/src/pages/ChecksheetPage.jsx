@@ -226,7 +226,7 @@ const ChecksheetPage = () => {
                     variant='primary'
                     onClick={async () => {
                         try {
-                            const response = await fetch(`${URL}checksheet/create`, { method: 'POST' });
+                            const response = await fetch(`${URL}/checksheet/create`, { method: 'POST' });
                             if (!response.ok) {
                                 const errorData = await response.json();
                                 throw new Error(errorData.message || 'Network response was not ok');
@@ -254,7 +254,7 @@ const ChecksheetPage = () => {
             <Box
                 justifyContent={'center'}
                 alignItems={'center'}
-                marginTop={isSmallScreen ? '8vh' : '15vh'}
+                marginTop={'2vh'}
                 marginBottom={'0px'}
                 marginLeft={'auto'}
                 marginRight={'auto'}
