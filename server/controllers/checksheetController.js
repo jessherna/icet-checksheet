@@ -35,8 +35,9 @@ exports.create = async (req, res) => {
         if (existingChecksheets.length > 0) {
             // Check if all checksheets are marked as checked
             const allChecked = existingChecksheets.every(sheet => sheet.isChecked);
+
             if (allChecked) {
-                return res.status(400).json({ message: `All labs have been checked.` });
+                return res.status(400).json({ message: `All labs have been checked. We are done for the day.` });
             } else {
                 return res.status(400).json({ message: `Today's checksheet has been started.` });
             }

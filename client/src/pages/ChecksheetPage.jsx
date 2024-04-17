@@ -15,16 +15,19 @@ import moment from 'moment';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+
     //const socket = io('http://localhost:5000');
 
     useEffect(() => {
+        setSelectedRows([]);
         const fetchData = async () => {
             const response = await fetch('http://localhost:5000/checksheet');
             const data = await response.json();
-    
+
             // Access the data array and filter out the checked ones
             const uncheckedSheets = data.filter(sheet => !sheet.isChecked);
-    
+
             // Map the data to a new format
             const mappedData = uncheckedSheets.map(sheet => ({
                 id: sheet._id,
@@ -34,15 +37,54 @@ const ChecksheetPage = () => {
                 checkedBy: sheet.checkedBy,
                 actualTime: sheet.actualTime ? moment(sheet.actualTime).format('hh:mm A') : ""
             }));
-    
+
             setData(mappedData);
         };
         fetchData();
     }, []);
 
-    const handleCheck = async ({ id }) => {
-        alert(`Checking sheet with id ${id}`);
+    const handleCheck = async ({ id, userName }) => {
+        try {
+            if (!userName) {
+                userName = prompt('Please enter your name');
+                if (userName === null || userName === '') {
+                    alert('Name is required');
+                    return;
+                }
+            }
+
+            const now = new Date();
+            const actualTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            const response = await fetch(`http://localhost:5000/checksheet/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    isChecked: true,
+                    checkedBy: userName,
+                    actualTime: actualTime,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log(data, 'Checksheet updated');
+
+            if (selectedRows) {
+                alert("Checksheet updated");
+            }
+
+            // Introduce a delay before the next check
+            await new Promise(resolve => setTimeout(resolve, 2000)); // 2000 ms = 2 seconds
+        } catch (err) {
+            console.error(err);
+            alert('Failed to update checksheet');
+        }
     };
+
 
     const isSmallScreen = useMediaQuery({ query: '(max-width: 600px)' });
 
@@ -98,11 +140,10 @@ const ChecksheetPage = () => {
         density: 'compact',
         enableGrouping: false,
         enablePagination: false,
-        enableRowSelection: true,
         initialState: {
             columnPinning: { right: ['mrt-row-actions'] },
             columnOrder: [
-                'mrt-row-select', 
+                'mrt-row-select',
                 'day',
                 'lab',
                 'startTime',
@@ -181,26 +222,26 @@ const ChecksheetPage = () => {
             <Box sx={{ display: 'flex', gap: '1rem', p: '4px' }}>
                 <Button
                     variant='primary'
-                    onClick={
-                        async () => {
-                            alert('Create checksheet...');
+                    onClick={async () => {
+                        try {
+                            const response = await fetch('http://localhost:5000/checksheet/create', { method: 'POST' });
+                            if (!response.ok) {
+                                const errorData = await response.json();
+                                throw new Error(errorData.message || 'Network response was not ok');
+                            }
+                            const data = await response.json();
+                            console.log(data, 'Checksheet created');
+                            alert('Checksheet created');
+                            window.location.reload();
+                        } catch (err) {
+                            console.error(err);
+                            alert(err.message);
                         }
-                    }
+                    }}
                 >
                     Create
                 </Button>
 
-                <Button
-                    variant='success'
-                    disabled={!table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()}
-                    onClick={
-                        async () => {
-                            alert('Mark lab as checked...');
-                        }
-                    }
-                >
-                    Check
-                </Button>
             </Box>
 
         ),
