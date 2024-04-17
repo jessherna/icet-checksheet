@@ -7,7 +7,7 @@ import { VITE_API_URL } from '../../config';
 const Schedule = () => {
     const [jsonData, setJsonData] = useState(null);
     const URL = `${VITE_API_URL}`;
-    const socket = io(URL, { reconnectionAttempts: 3 });
+    const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket']});
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];

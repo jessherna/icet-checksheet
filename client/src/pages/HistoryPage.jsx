@@ -12,7 +12,7 @@ import { VITE_API_URL } from '../../config';
 const HistoryPage = () => {
     const [data, setData] = useState([]);
     const URL = `${VITE_API_URL}`;
-    const socket = io(URL, { reconnectionAttempts: 3 });
+    const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket'] });
 
     useEffect(() => {
         const fetchData = async () => {

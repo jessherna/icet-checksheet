@@ -18,7 +18,7 @@ const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
     const URL = `${VITE_API_URL}`;
-    const socket = io(URL, { reconnectionAttempts: 3 });
+    const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket'] });
 
     useEffect(() => {
         setSelectedRows([]);
