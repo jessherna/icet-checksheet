@@ -21,6 +21,7 @@ const ChecksheetPage = () => {
     const socket = io(URL, { reconnectionAttempts: 3, transports: ['websocket'] });
 
     useEffect(() => {
+        socket.connect();
         setSelectedRows([]);
         const fetchData = async () => {
             const response = await fetch(`${URL}/checksheet`);
@@ -42,6 +43,7 @@ const ChecksheetPage = () => {
             setData(mappedData);
         };
         fetchData();
+        socket.disconnect();
     }, [socket, URL]);
 
     const handleCheck = async ({ id, userName }) => {
