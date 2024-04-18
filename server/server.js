@@ -26,14 +26,16 @@ mongoose.connect(mongoUrl)
 
 app.use(express.json());
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST", "PATCH", "DELETE"],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+console.log(process.env.FRONTEND_URL), "frontend url";
+
 const io = require("socket.io")(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+        origin: process.env.FRONTEND_URL,
         methods: ["GET", "POST", "PATCH", "DELETE"],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true
