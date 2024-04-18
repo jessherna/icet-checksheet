@@ -75,7 +75,7 @@ const ChecksheetPage = () => {
             socket.disconnect();
         };
 
-    }, []);
+    }, [socket]);
 
     const handleCheck = async ({ id, userName }) => {
         try {
