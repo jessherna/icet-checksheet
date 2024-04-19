@@ -16,14 +16,14 @@ import io from 'socket.io-client';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
-    const [selectedRows, setSelectedRows] = useState([]);
     const URL = process.env.REACT_APP_API_URL;
+    const [socket, setSocket] = useState(io(URL));
 
-    const socket = io(URL, { reconnectionAttempts: 3});
-    
     useEffect(() => {
-        socket.connect();
-        setSelectedRows([]);
+        if (!socket) {
+            setSocket(io(URL));
+        }
+
         const fetchData = async () => {
             const response = await fetch(`${URL}/checksheet`, {
                 headers: {
@@ -49,8 +49,27 @@ const ChecksheetPage = () => {
         };
         fetchData();
 
-        // Listen for the 'checksheetUpdated' event and update the state
+        return () => {
+            socket.disconnect();
+        };
+    }, [URL, socket]);
+
+    useEffect(() => {
+        if (!socket) {
+            return;
+        }
+        
+        socket.on('connect', () => {
+            console.log('Connected to socket');
+        });
         socket.on('checksheetUpdated', (updatedChecksheet) => {
+            if (!updatedChecksheet) {
+                console.error('Received undefined checksheet');
+                return;
+            }
+
+            console.log('Received updated checksheet:', updatedChecksheet);
+            
             // Transform the updated checksheet into the same format as the data in the state
             const transformedChecksheet = {
                 id: updatedChecksheet._id,
@@ -58,26 +77,38 @@ const ChecksheetPage = () => {
                 lab: updatedChecksheet.lab,
                 startTime: moment(updatedChecksheet.startTime, 'HH:mm:ss').format('hh:mm A'),
                 checkedBy: updatedChecksheet.checkedBy,
-                actualTime: updatedChecksheet.actualTime ? moment(updatedChecksheet.actualTime).format('hh:mm A') : ""
+                actualTime: updatedChecksheet.actualTime ? moment(updatedChecksheet.actualTime).format('hh:mm A') : "",
+                isChecked: updatedChecksheet.isChecked,
             };
 
+            console.log(transformedChecksheet, 'Transformed checksheet')
+            
             setData(prevData => {
                 // Replace the updated checksheet in the data array
                 const updatedData = prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
-
+                console.log(updatedData, 'Updated data')
                 // Filter the data to show only the checksheets where isChecked is false
                 return updatedData.filter(sheet => !sheet.isChecked);
+                
             });
+            
         });
 
         // Clean up the effect by disconnecting from the socket when the component is unmounted
         return () => {
-            socket.disconnect();
+            socket.off("checksheetUpdated");
+            socket.off("connect");
         };
-
+        
     }, [socket]);
 
+
+
     const handleCheck = async ({ id, userName }) => {
+        // Check if the socket is connected before emitting the event
+        if (!socket.connected) {
+            socket.connect();
+        }
         try {
             if (!userName) {
                 userName = prompt('Please enter your name');
@@ -107,13 +138,14 @@ const ChecksheetPage = () => {
             const data = await response.json();
             console.log(data, 'Checksheet updated');
 
-            if (selectedRows) {
-                alert("Checksheet updated");
-                window.location.reload();
-            }
+            // Fetch the updated checksheet
+            const updatedChecksheetResponse = await fetch(`${URL}/checksheet/${id}`);
+            const updatedChecksheet = await updatedChecksheetResponse.json();
 
-            // Emit a socket event to notify the server that a checksheet has been updated
-            socket.emit('checksheetUpdated', { id });
+            alert("Checksheet updated");
+        
+            socket.emit('checksheetUpdated', updatedChecksheet);
+
         } catch (err) {
             console.error(err);
             alert('Failed to update checksheet');

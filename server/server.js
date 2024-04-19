@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const socketIo = require('socket.io');
 const cors = require('cors');
 require('dotenv').config();
-const Checksheet = require('./models/Checksheet');
+const checksheetController = require('./controllers/checksheetController');
 
 const app = express();
 const server = http.createServer(app);
@@ -45,12 +45,14 @@ const io = require("socket.io")(server, {
 app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
-io.on('connection', (socket) => {
+io.on("connect", (socket) => {
     console.log('New client connected');
     socket.on('scheduleUploaded', () => console.log('Schedule uploaded'));
-    socket.on('checksheetUpdated', async ({ id }) => {
-        const updatedChecksheet = await getUpdatedChecksheet(id);
+    socket.on('checksheetUpdated', (updatedChecksheet) => {
+        console.log('Checksheet updated', updatedChecksheet._id);
+        // Emit the 'checksheetUpdated' event to the other clients with the updated checksheet
         io.emit('checksheetUpdated', updatedChecksheet);
+        console.log('broadcasted');
     });
     socket.on('scheduleUpdated', () => console.log('Schedule updated'));
     socket.on('disconnect', () => console.log('Client disconnected'));
