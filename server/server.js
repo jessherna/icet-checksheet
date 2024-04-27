@@ -46,7 +46,6 @@ app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
 io.on("connect", (socket) => {
-    console.log('New client connected');
     socket.on('scheduleUploaded', () => console.log('Schedule uploaded'));
     socket.on('checksheetUpdated', (updatedChecksheet) => {
         console.log('Checksheet updated', updatedChecksheet._id);

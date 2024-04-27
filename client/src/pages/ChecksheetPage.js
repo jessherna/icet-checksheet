@@ -16,7 +16,7 @@ import io from 'socket.io-client';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
-    const URL = process.env.REACT_APP_API_URL;
+    const URL = 'http://localhost:5000';
     const [socket, setSocket] = useState(io(URL));
 
     useEffect(() => {
@@ -49,9 +49,10 @@ const ChecksheetPage = () => {
         };
         fetchData();
 
+        /*
         return () => {
             socket.disconnect();
-        };
+        };*/
     }, [URL, socket]);
 
     useEffect(() => {
@@ -67,26 +68,21 @@ const ChecksheetPage = () => {
                 console.error('Received undefined checksheet');
                 return;
             }
-
-            console.log('Received updated checksheet:', updatedChecksheet);
             
             // Transform the updated checksheet into the same format as the data in the state
             const transformedChecksheet = {
                 id: updatedChecksheet._id,
                 day: updatedChecksheet.day,
                 lab: updatedChecksheet.lab,
-                startTime: moment(updatedChecksheet.startTime, 'HH:mm:ss').format('hh:mm A'),
+                startTime: moment(updatedChecksheet.startTime).format('hh:mm A'),
                 checkedBy: updatedChecksheet.checkedBy,
                 actualTime: updatedChecksheet.actualTime ? moment(updatedChecksheet.actualTime).format('hh:mm A') : "",
                 isChecked: updatedChecksheet.isChecked,
             };
-
-            console.log(transformedChecksheet, 'Transformed checksheet')
             
             setData(prevData => {
                 // Replace the updated checksheet in the data array
                 const updatedData = prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
-                console.log(updatedData, 'Updated data')
                 // Filter the data to show only the checksheets where isChecked is false
                 return updatedData.filter(sheet => !sheet.isChecked);
                 
@@ -97,7 +93,7 @@ const ChecksheetPage = () => {
         // Clean up the effect by disconnecting from the socket when the component is unmounted
         return () => {
             socket.off("checksheetUpdated");
-            socket.off("connect");
+            //socket.off("connect");
         };
         
     }, [socket]);
@@ -297,9 +293,8 @@ const ChecksheetPage = () => {
                                 throw new Error(errorData.message || 'Network response was not ok');
                             }
                             const data = await response.json();
-                            console.log(data, 'Checksheet created');
                             alert('Checksheet created');
-                            window.location.reload();
+                            //window.location.reload();
                         } catch (err) {
                             console.error(err);
                             alert(err.message);

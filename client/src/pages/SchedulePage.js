@@ -5,10 +5,13 @@ import { io } from 'socket.io-client';
 
 const Schedule = () => {
     const [jsonData, setJsonData] = useState(null);
-    const URL = process.env.REACT_APP_API_URL;
-    const socket = io(URL, { reconnectionAttempts: 3});
+    const URL = 'http://localhost:5000';
+    const [socket, setSocket] = useState(io(URL));
 
     const handleFileUpload = (event) => {
+        if (!socket) {
+            setSocket(io(URL));
+        }
         const file = event.target.files[0];
         const reader = new FileReader();
 
