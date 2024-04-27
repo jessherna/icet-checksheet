@@ -5,7 +5,8 @@ import { io } from 'socket.io-client';
 
 const Schedule = () => {
     const [jsonData, setJsonData] = useState(null);
-    const URL = 'http://localhost:5000';
+    const URL = process.env.REACT_APP_API_URL;
+    const local = 'http://localhost:5000';
     const [socket, setSocket] = useState(io(URL));
 
     const handleFileUpload = (event) => {
