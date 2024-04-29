@@ -54,7 +54,16 @@ exports.create = async (req, res) => {
         }));
 
         // Save all checksheets
-        const newChecksheets = await Promise.all(checksheets.map(sheet => sheet.save()));
+        const newChecksheets = [];
+        for (const sheet of checksheets) {
+            // Check if a checksheet with the same lab and startTime already exists
+            const existingChecksheet = await Checksheet.findOne({ lab: sheet.lab, startTime: sheet.startTime });
+            if (!existingChecksheet) {
+                // If no existing checksheet, save the new checksheet
+                const savedSheet = await sheet.save();
+                newChecksheets.push(savedSheet);
+            }
+        }
         res.status(201).json(newChecksheets);
         console.log(newChecksheets, 'Checksheet created');
     } catch (err) {
