@@ -10,8 +10,9 @@ import io from 'socket.io-client';
 
 const HistoryPage = () => {
     const [data, setData] = useState([]);
-    const URL = process.env.REACT_APP_API_URL;
     const local = 'http://localhost:5000';
+    //const URL = process.env.REACT_APP_API_URL;
+    const URL = local;
     const socket = io(URL, { reconnectionAttempts: 3});
 
     useEffect(() => {

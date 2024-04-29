@@ -16,8 +16,9 @@ import io from 'socket.io-client';
 
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
-    const URL = process.env.REACT_APP_API_URL;
     const local = 'http://localhost:5000';
+    //const URL = process.env.REACT_APP_API_URL;
+    const URL = local;
     const [socket, setSocket] = useState(io(URL));
 
     useEffect(() => {
@@ -50,26 +51,33 @@ const ChecksheetPage = () => {
         };
         fetchData();
 
-        /*
+        socket.on("checksheetCreated", (createdChecksheet) => {
+            console.log('Checksheet created', createdChecksheet);
+            fetchData();
+        });
+
+        
         return () => {
-            socket.disconnect();
-        };*/
+            //socket.disconnect();
+            socket.off("checksheetCreated");
+        };
     }, [URL, socket]);
 
     useEffect(() => {
         if (!socket) {
             return;
         }
-        
+
         socket.on('connect', () => {
             console.log('Connected to socket');
         });
+
         socket.on('checksheetUpdated', (updatedChecksheet) => {
             if (!updatedChecksheet) {
                 console.error('Received undefined checksheet');
                 return;
             }
-            
+
             // Transform the updated checksheet into the same format as the data in the state
             const transformedChecksheet = {
                 id: updatedChecksheet._id,
@@ -80,15 +88,15 @@ const ChecksheetPage = () => {
                 actualTime: updatedChecksheet.actualTime ? moment(updatedChecksheet.actualTime).format('hh:mm A') : "",
                 isChecked: updatedChecksheet.isChecked,
             };
-            
+
             setData(prevData => {
                 // Replace the updated checksheet in the data array
                 const updatedData = prevData.map(sheet => sheet.id === transformedChecksheet.id ? transformedChecksheet : sheet);
                 // Filter the data to show only the checksheets where isChecked is false
                 return updatedData.filter(sheet => !sheet.isChecked);
-                
+
             });
-            
+
         });
 
         // Clean up the effect by disconnecting from the socket when the component is unmounted
@@ -96,10 +104,8 @@ const ChecksheetPage = () => {
             socket.off("checksheetUpdated");
             //socket.off("connect");
         };
-        
+
     }, [socket]);
-
-
 
     const handleCheck = async ({ id, userName }) => {
         // Check if the socket is connected before emitting the event
@@ -133,14 +139,13 @@ const ChecksheetPage = () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            console.log(data, 'Checksheet updated');
+            //console.log(data, 'Checksheet updated');
 
             // Fetch the updated checksheet
             const updatedChecksheetResponse = await fetch(`${URL}/checksheet/${id}`);
             const updatedChecksheet = await updatedChecksheetResponse.json();
 
             alert("Checksheet updated");
-        
             socket.emit('checksheetUpdated', updatedChecksheet);
 
         } catch (err) {
@@ -288,13 +293,18 @@ const ChecksheetPage = () => {
                     variant='primary'
                     onClick={async () => {
                         try {
+                            if (!socket.connected) {
+                                socket.connect();
+                            }
                             const response = await fetch(`${URL}/checksheet/create`, { method: 'POST' });
                             if (!response.ok) {
                                 const errorData = await response.json();
                                 throw new Error(errorData.message || 'Network response was not ok');
                             }
-                            const data = await response.json();
+                            const createdChecksheet = await response.json();
+
                             alert('Checksheet created');
+                            socket.emit('checksheetCreated', createdChecksheet);
                             //window.location.reload();
                         } catch (err) {
                             console.error(err);
