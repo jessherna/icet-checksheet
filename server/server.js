@@ -53,6 +53,10 @@ io.on("connect", (socket) => {
         io.emit('checksheetUpdated', updatedChecksheet);
         console.log('broadcasted');
     });
+    socket.on('checksheetCreated', (createdChecksheets) => {
+        io.emit('checksheetCreated', createdChecksheets);
+        console.log('Checksheet created -server', createdChecksheets);
+    });
     socket.on('scheduleUpdated', () => console.log('Schedule updated'));
     socket.on('disconnect', () => console.log('Client disconnected'));
 });

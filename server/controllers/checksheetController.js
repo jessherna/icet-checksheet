@@ -1,4 +1,7 @@
 const Checksheet = require('../models/Checksheet');
+const local = 'http://localhost:5000';
+//const URL = process.env.REACT_APP_API_URL;
+const URL = local;
 
 exports.getAll = async (req, res) => {
     try {
@@ -24,7 +27,7 @@ exports.getOne = async (req, res) => {
 exports.create = async (req, res) => {
     try {
         // Fetch today's schedule
-        const scheduleResponse = await fetch('http://localhost:5000/schedule/today');
+        const scheduleResponse = await fetch(`${URL}/schedule/today`);
         const schedule = await scheduleResponse.json(); // Parse the response body as JSON
 
         // Check if there's already a checksheet for today
