@@ -1,7 +1,7 @@
 const Checksheet = require('../models/Checksheet');
 const local = 'http://localhost:5000';
-//const URL = process.env.REACT_APP_API_URL;
-const URL = local;
+const URL = process.env.REACT_APP_API_URL;
+//const URL = local;
 
 exports.getAll = async (req, res) => {
     try {
