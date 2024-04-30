@@ -95,12 +95,3 @@ exports.update = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
-
-exports.delete = async (req, res) => {
-    try {
-        await Checksheet.findByIdAndRemove(req.params.id);
-        res.status(200).json({ message: 'Deleted checksheet' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
