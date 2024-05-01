@@ -47,11 +47,11 @@ const HistoryPage = () => {
             });
         });
 
-        /*
+        
         // Clean up the effect by disconnecting from the socket when the component is unmounted
         return () => {
             socket.disconnect();
-        };*/
+        };
 
     }, [socket]);
 
