@@ -11,49 +11,48 @@ import io from 'socket.io-client';
 const HistoryPage = () => {
     const [data, setData] = useState([]);
     const local = 'http://localhost:5000';
-    const URL = process.env.REACT_APP_API_URL;
+    const URL = process.env.REACT_APP_API_URL || local;
     //const URL = local;
-    const socket = io(URL, { reconnectionAttempts: 3});
+    const [socket, setSocket] = useState(io(URL));
 
     useEffect(() => {
-        socket.connect();
-        const fetchData = async () => {
-            const response = await fetch(`${URL}/checksheet`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            const data = await response.json();
-
-            // Map the data to a new format
-            const mappedData = data.map(sheet => ({
-                id: sheet._id,
-                day: sheet.day,
-                lab: sheet.lab,
-                startTime: moment(sheet.startTime, 'HH:mm:ss').format('hh:mm A'),
-                checkedBy: sheet.checkedBy,
-                actualTime: sheet.actualTime ? moment(sheet.actualTime).format('hh:mm A') : ""
-            }));
-
-            setData(mappedData);
-        };
-        fetchData();
-
-        // Listen for the 'checksheetUpdated' event and update the state
-        socket.on('checksheetUpdated', (updatedChecksheet) => {
-            setData(prevData => {
-                // Replace the updated checksheet in the data array
-                return prevData.map(sheet => sheet.id === updatedChecksheet.id ? updatedChecksheet : sheet);
-            });
+    if (!socket) {
+        setSocket(io(URL));
+    }
+    const fetchData = async () => {
+        const response = await fetch(`${URL}/checksheet`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
+        const data = await response.json();
 
-        
-        // Clean up the effect by disconnecting from the socket when the component is unmounted
-        return () => {
-            socket.disconnect();
-        };
+        // Filter the data to only include checksheets where isChecked is true
+        const filteredData = data.filter(sheet => sheet.isChecked);
 
-    }, [socket]);
+        // Map the filtered data to a new format
+        const mappedData = filteredData.map(sheet => ({
+            id: sheet._id,
+            day: sheet.day,
+            lab: sheet.lab,
+            startTime: moment(sheet.startTime, 'HH:mm:ss').format('hh:mm A'),
+            checkedBy: sheet.checkedBy,
+            actualTime: sheet.actualTime ? moment(sheet.actualTime).format('hh:mm A') : ""
+        }));
+
+        setData(mappedData);
+    };
+    fetchData();
+
+    // Listen for the 'checksheetUpdated' event and update the state
+    socket.on('checksheetUpdated', (updatedChecksheet) => {
+        setData(prevData => {
+            // Replace the updated checksheet in the data array
+            return prevData.map(sheet => sheet.id === updatedChecksheet.id ? updatedChecksheet : sheet);
+        });
+    });
+
+}, [socket]);
 
     
     const isSmallScreen = useMediaQuery({ query: '(max-width: 600px)' });

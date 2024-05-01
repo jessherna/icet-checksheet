@@ -17,8 +17,7 @@ import io from 'socket.io-client';
 const ChecksheetPage = () => {
     const [data, setData] = useState([]);
     const local = 'http://localhost:5000';
-    const URL = process.env.REACT_APP_API_URL;
-    //const URL = local;
+    const URL = process.env.REACT_APP_API_URL || local;
     const [socket, setSocket] = useState(io(URL));
 
     useEffect(() => {
