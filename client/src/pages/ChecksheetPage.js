@@ -55,7 +55,7 @@ const ChecksheetPage = () => {
             fetchData();
         });
 
-        
+
         return () => {
             //socket.disconnect();
             socket.off("checksheetCreated");
@@ -227,7 +227,6 @@ const ChecksheetPage = () => {
             showSummary: false,
             showTableSelector: false,
             showViewChanger: false,
-            showLoadingOverlay: true,
         },
         enableRowActions: true,
         positionActionsColumn: 'last',
@@ -333,7 +332,18 @@ const ChecksheetPage = () => {
                 overflow={'auto'}
                 padding={'0px'}
             >
-                <MaterialReactTable table={table} />
+                <MaterialReactTable table={table}
+                    state={{ isLoading: true }}
+                    muiCircularProgressProps={{
+                        color: 'secondary',
+                        thickness: 5,
+                        size: 55,
+                    }}
+                    muiSkeletonProps={{
+                        animation: 'pulse',
+                        height: 28,
+                    }}
+                />
             </Box>
         </>
     );
