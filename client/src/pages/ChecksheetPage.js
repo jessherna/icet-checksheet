@@ -227,6 +227,7 @@ const ChecksheetPage = () => {
             showSummary: false,
             showTableSelector: false,
             showViewChanger: false,
+            showLoadingOverlay: true,
         },
         enableRowActions: true,
         positionActionsColumn: 'last',
