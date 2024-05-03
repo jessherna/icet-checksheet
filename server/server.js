@@ -46,7 +46,6 @@ app.use('/checksheet', checksheetRouter);
 app.use('/schedule', scheduleRouter);
 
 io.on("connect", (socket) => {
-    socket.on('scheduleUploaded', () => console.log('Schedule uploaded'));
     socket.on('checksheetUpdated', (updatedChecksheet) => {
         console.log('Checksheet updated', updatedChecksheet._id);
         // Emit the 'checksheetUpdated' event to the other clients with the updated checksheet
